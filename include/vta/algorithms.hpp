@@ -434,7 +434,7 @@ template <int N, int M>
 struct swap {
 	template <typename Function, typename... Args>
 	constexpr static auto transform(Function&& f, Args&&... args) {
-		static const int size = sizeof...(args);
+		static int const size = sizeof...(args);
 		static_assert(-size <= N && N < size,
 		  "N is out of bounds");
 		static_assert(-size <= M && M < size,
@@ -826,14 +826,14 @@ constexpr auto head(Arg&& head, Args&&...) noexcept {
 	return std::forward<Arg>(head);
 }
 
-template <typename Arg, typename... Args>
-constexpr auto last(Arg&&, Args&&... args) noexcept {
-	return last(std::forward(args)...);
-}
-
 template <typename Arg>
 constexpr auto last(Arg&& arg) noexcept {
-	return std::forward(arg);
+	return std::forward<Arg>(arg);
+}
+
+template <typename Arg1, typename Arg2, typename... Args>
+constexpr auto last(Arg1&&, Arg2&&, Args&&... rest) noexcept {
+	return last(std::forward<Args>(rest)...);
 }
 
 namespace detail {
@@ -843,25 +843,28 @@ struct at_helper;
 
 template <unsigned N>
 struct at_helper {
-	template <typename... Args>
-	constexpr static auto get(Args&&... args) noexcept {
+	template <typename Arg, typename... Args>
+	constexpr static auto get(Arg&&, Args&&... args) noexcept {
 		return at_helper<N - 1>::get(std::forward<Args>(args)...);
 	}
 };
 
 template <>
 struct at_helper<0u> {
-	template <typename Arg, typename... Args>
-	constexpr static auto get(Arg&& head, Args&&...) noexcept {
-		return std::forward<Arg>(head);
+	template <typename... Args>
+	constexpr static auto get(Args&&... args) noexcept {
+		return head(std::forward<Args>(args)...);
 	}
 };
 
 }
 
-template <unsigned N, typename Arg, typename... Args>
-auto at(Args&&... args) noexcept {
-	return detail::at_helper<N>::get(std::forward<Args>(args)...);
+template <int N, typename... Args>
+constexpr auto at(Args&&... args) noexcept {
+	// GCC won't let me create static const variables in a
+	// constexpr function so we are left with this mess below.
+	static_assert(-static_cast<int>(sizeof...(args)) <= N && N < static_cast<int>(sizeof...(args)), "N is out of bounds");
+	return detail::at_helper<static_cast<unsigned>((N + sizeof...(args)) % sizeof...(args))>::get(std::forward<Args>(args)...);
 }
 
 }

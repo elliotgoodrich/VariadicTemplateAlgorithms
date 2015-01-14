@@ -92,23 +92,28 @@ BOOST_AUTO_TEST_CASE(is_unique) {
 }
 
 BOOST_AUTO_TEST_CASE(head) {
-	auto f = [](){
-		return vta::head(0);
-	};
-	static_assert(std::is_same<int, decltype(f())>::value, "");
-	BOOST_CHECK_EQUAL(f(), 0);
+	BOOST_CHECK_EQUAL(vta::head(0), 0);
+	BOOST_CHECK_EQUAL(vta::head(std::string{"1"}), "1");
+	BOOST_CHECK_EQUAL(vta::head(0, 1, 2), 0);
+	BOOST_CHECK_EQUAL(vta::head(1, "2", 3), 1);
+}
 
-	auto g = [](){
-		return vta::head(3l, 1u);
-	};
-	static_assert(std::is_same<long, decltype(g())>::value, "");
-	BOOST_CHECK_EQUAL(g(), 3l);
+BOOST_AUTO_TEST_CASE(last) {
+	BOOST_CHECK_EQUAL(vta::last(0), 0);
+	BOOST_CHECK_EQUAL(vta::last(std::string{"1"}), "1");
+	BOOST_CHECK_EQUAL(vta::last(0, 1, 2), 2);
+	BOOST_CHECK_EQUAL(vta::last(1, "2", 3), 3);
+}
 
-	auto h = [](){
-		return vta::head(std::string{}, 0, 3u);
-	};
-	static_assert(std::is_same<std::string, decltype(h())>::value, "");
-	BOOST_CHECK_EQUAL(h(), std::string{});
+BOOST_AUTO_TEST_CASE(at) {
+	BOOST_CHECK_EQUAL(vta::at<0>(0), 0);
+	BOOST_CHECK_EQUAL(vta::at<-1>(0), 0);
+	BOOST_CHECK_EQUAL(vta::at<0>(1, '2', 3u, 4.5, "six"), 1);
+	BOOST_CHECK_EQUAL(vta::at<-5>(1, '2', 3u, 4.5, "six"), 1);
+	BOOST_CHECK_EQUAL(vta::at<3>(1, '2', 3u, 4.5, "six"), 4.5);
+	BOOST_CHECK_EQUAL(vta::at<-2>(1, '2', 3u, 4.5, "six"), 4.5);
+	BOOST_CHECK_EQUAL(vta::at<4>(1, '2', 3u, 4.5, "six"), std::string{"six"});
+	BOOST_CHECK_EQUAL(vta::at<-1>(1, '2', 3u, 4.5, "six"), std::string{"six"});
 }
 
 /**************************************************************************************************
