@@ -538,6 +538,77 @@ template <typename Function, typename... Args>
 	}
 };
 
+namespace detail {
+
+template <template <class> class Predicate, typename... Passed>
+struct filter_helper;
+
+template <template <class> class Predicate, bool Passed, typename... Passed>
+struct next_has_passed;
+
+template <template <class> class Predicate, typename... Passed>
+struct next_has_passed<Predicate, true, Passed...> {
+	template <typename Function, typename Next, typename... ToBeEvaluated>
+	constexpr static auto transform(Function&& f, Passed&&... passed, Next&& next, ToBeEvaluated&&... rest) {
+		return filter_helper<Predicate, Passed..., Next>::transform(std::forward<Function>(f),
+		                                                            std::forward<Passed>(passed)...,
+		                                                            std::forward<Next>(next),
+		                                                            std::forward<ToBeEvaluated>(rest)...);
+	}
+
+	template <typename Function>
+	constexpr static auto transform(Function&& f, Passed&&... passed) {
+		return std::forward<Function>(f)(std::forward<Passed>(passed)...);
+	}
+};
+
+template <template <class> class Predicate, typename... Passed>
+struct next_has_passed<Predicate, false, Passed...> {
+	template <typename Function, typename Next, typename... ToBeEvaluated>
+	constexpr static auto transform(Function&& f, Passed&&... passed, Next&&, ToBeEvaluated&&... rest) {
+		return filter_helper<Predicate, Passed...>::transform(std::forward<Function>(f),
+		                                                      std::forward<Passed>(passed)...,
+		                                                      std::forward<ToBeEvaluated>(rest)...);
+	}
+
+	template <typename Function>
+	constexpr static auto transform(Function&& f, Passed&&... passed) {
+		return std::forward<Function>(f)(std::forward<Passed>(passed)...);
+	}
+};
+
+template <template <class> class Predicate, typename... Passed>
+struct filter_helper {
+	template <typename Function, typename Next, typename... ToBeEvaluated>
+	constexpr static auto transform(Function&& f, Passed&&... passed, Next&& next, ToBeEvaluated&&... rest) {
+		typedef next_has_passed<Predicate,
+		                        Predicate<Next>::value,
+		                        Passed...> NextTransform;
+		return NextTransform::transform(std::forward<Function>(f),
+		                                std::forward<Passed>(passed)...,
+		                                std::forward<Next>(next),
+		                                std::forward<ToBeEvaluated>(rest)...);
+	}
+
+	template <typename Function, typename... ToBeEvaluated>
+	constexpr static auto transform(Function&& f, Passed&&... passed) {
+		return std::forward<Function>(f)(std::forward<Passed>(passed)...);
+	}
+};
+
+}
+
+/** Filter in parameters only if Predicate<Arg>::value is true for each argument type. */
+template <template <class> class Predicate>
+struct filter {
+	template <typename Function, typename... Args>
+	constexpr static auto transform(Function&& f, Args&&... args) {
+		typedef detail::filter_helper<Predicate> Next;
+		return Next::transform(std::forward<Function>(f),
+		                       std::forward<Args>(args)...);
+	}
+};
+
 /**************************************************************************************************
  * Functions                                                                                      *
  **************************************************************************************************/

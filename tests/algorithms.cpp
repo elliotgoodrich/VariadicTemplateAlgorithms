@@ -413,6 +413,38 @@ BOOST_AUTO_TEST_CASE(reverse) {
 	}
 }
 
+BOOST_AUTO_TEST_CASE(filter) {
+	{
+		std::stringstream ss;
+		vta::forward_after<vta::filter<std::is_integral>>(vta::map(printer{ss}))();
+		BOOST_CHECK_EQUAL(ss.str(), "");
+	}
+
+	{
+		std::stringstream ss;
+		vta::forward_after<vta::filter<std::is_integral>>(vta::map(printer{ss}))(1);
+		BOOST_CHECK_EQUAL(ss.str(), "1");
+	}
+
+	{
+		std::stringstream ss;
+		vta::forward_after<vta::filter<std::is_integral>>(vta::map(printer{ss}))("1");
+		BOOST_CHECK_EQUAL(ss.str(), "");
+	}
+
+	{
+		std::stringstream ss;
+		vta::forward_after<vta::filter<std::is_integral>>(vta::map(printer{ss}))(1, "2", 3.0);
+		BOOST_CHECK_EQUAL(ss.str(), "1");
+	}
+
+	{
+		std::stringstream ss;
+		vta::forward_after<vta::filter<std::is_integral>>(vta::map(printer{ss}))(1, '2', 3u, 4.5, "six");
+		BOOST_CHECK_EQUAL(ss.str(), "123");
+	}
+}
+
 // Functions
 
 BOOST_AUTO_TEST_CASE(map) {
