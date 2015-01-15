@@ -821,6 +821,11 @@ constexpr none_of_f<typename std::remove_reference<Function>::type> none_of(Func
  * Utility Functions                                                                              *
  **************************************************************************************************/
 
+template <typename T>
+constexpr T const& add_const(T&& t) noexcept {
+	return t;
+}
+
 template <typename Arg, typename... Args>
 constexpr auto head(Arg&& head, Args&&...) noexcept {
 	return std::forward<Arg>(head);
