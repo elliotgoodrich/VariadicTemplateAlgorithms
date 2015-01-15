@@ -63,32 +63,32 @@ struct adjacent_printer {
 
 BOOST_AUTO_TEST_SUITE(algorithms)
 
-BOOST_AUTO_TEST_CASE(is_homogenous) {
-	static_assert(vta::is_homogenous<>::value, "");
-	static_assert(vta::is_homogenous<int>::value, "");
-	static_assert(vta::is_homogenous<int, int>::value, "");
-	static_assert(vta::is_homogenous<int, int, int>::value, "");
-	static_assert(!vta::is_homogenous<int, float>::value, "");
-	static_assert(!vta::is_homogenous<int&, int>::value, "");
-	static_assert(!vta::is_homogenous<int const&, int&>::value, "");
-	static_assert(!vta::is_homogenous<int&&, int&>::value, "");
-	static_assert(!vta::is_homogenous<const int, int>::value, "");
-	static_assert(!vta::is_homogenous<volatile int, int>::value, "");
+BOOST_AUTO_TEST_CASE(are_same) {
+	static_assert(vta::are_same<>::value, "");
+	static_assert(vta::are_same<int>::value, "");
+	static_assert(vta::are_same<int, int>::value, "");
+	static_assert(vta::are_same<int, int, int>::value, "");
+	static_assert(!vta::are_same<int, float>::value, "");
+	static_assert(!vta::are_same<int&, int>::value, "");
+	static_assert(!vta::are_same<int const&, int&>::value, "");
+	static_assert(!vta::are_same<int&&, int&>::value, "");
+	static_assert(!vta::are_same<const int, int>::value, "");
+	static_assert(!vta::are_same<volatile int, int>::value, "");
 }
 
-BOOST_AUTO_TEST_CASE(is_homogenous_after) {
-	static_assert(vta::is_homogenous_after<std::remove_reference, int&&, int&>::value, "");
+BOOST_AUTO_TEST_CASE(are_same_after) {
+	static_assert(vta::are_same_after<std::remove_reference, int&&, int&>::value, "");
 }
 
-BOOST_AUTO_TEST_CASE(is_unique) {
-	static_assert(vta::is_unique<>::value, "");
-	static_assert(vta::is_unique<1>::value, "");
-	static_assert(vta::is_unique<1, 2>::value, "");
-	static_assert(!vta::is_unique<1, 1>::value, "");
-	static_assert(vta::is_unique<1, -1>::value, "");
-	static_assert(vta::is_unique<1, 2, 3, 4, 5>::value, "");
-	static_assert(!vta::is_unique<1, 2, 3, 1, 5>::value, "");
-	static_assert(!vta::is_unique<2, 3, 4, 5, 6, 5>::value, "");
+BOOST_AUTO_TEST_CASE(are_unique) {
+	static_assert(vta::are_unique<>::value, "");
+	static_assert(vta::are_unique<1>::value, "");
+	static_assert(vta::are_unique<1, 2>::value, "");
+	static_assert(!vta::are_unique<1, 1>::value, "");
+	static_assert(vta::are_unique<1, -1>::value, "");
+	static_assert(vta::are_unique<1, 2, 3, 4, 5>::value, "");
+	static_assert(!vta::are_unique<1, 2, 3, 1, 5>::value, "");
+	static_assert(!vta::are_unique<2, 3, 4, 5, 6, 5>::value, "");
 }
 
 BOOST_AUTO_TEST_CASE(head) {

@@ -37,55 +37,55 @@ namespace vta {
 
 // predicates
 
-/** is_homogenous */
+/** are_same */
 template <typename... Args>
-struct is_homogenous;
+struct are_same;
 
 template <typename First, typename Second, typename... Args>
-struct is_homogenous<First, Second, Args...> {
+struct are_same<First, Second, Args...> {
 	static bool const value = std::is_same<First, Second>::value
-	                       && is_homogenous<Second, Args...>::value;
+	                       && are_same<Second, Args...>::value;
 };
 
 template <typename Arg>
-struct is_homogenous<Arg> : public std::true_type {};
+struct are_same<Arg> : public std::true_type {};
 
 template <>
-struct is_homogenous<> : public std::true_type {};
+struct are_same<> : public std::true_type {};
 
-/** is_homogenous_after */
+/** are_same_after */
 template <template<class> class Transform, typename... Args>
-struct is_homogenous_after;
+struct are_same_after;
 
 template <template<class> class Transform, typename First, typename Second, typename... Args>
-struct is_homogenous_after<Transform, First, Second, Args...> {
+struct are_same_after<Transform, First, Second, Args...> {
 	static bool const value = std::is_same<typename Transform<First>::type, typename Transform<Second>::type>::value
-	                       && is_homogenous_after<Transform, Second, Args...>::value;
+	                       && are_same_after<Transform, Second, Args...>::value;
 };
 
 template <template<class> class Transform, typename Arg>
-struct is_homogenous_after<Transform, Arg> : public std::true_type {};
+struct are_same_after<Transform, Arg> : public std::true_type {};
 
 template <template<class> class Transform>
-struct is_homogenous_after<Transform> : public std::true_type {};
+struct are_same_after<Transform> : public std::true_type {};
 
-/** is_unique */
+/** are_unique */
 template <int... Ns>
-struct is_unique;
+struct are_unique;
 
 template <>
-struct is_unique<> {
+struct are_unique<> {
 	static bool const value = true;
 };
 
 template <int N>
-struct is_unique<N> {
+struct are_unique<N> {
 	static bool const value = true;
 };
 
 template <int M, int N, int... Ns>
-struct is_unique<M, N, Ns...> {
-	static bool const value = (M != N) && is_unique<M, Ns...>::value && is_unique<N, Ns...>::value;
+struct are_unique<M, N, Ns...> {
+	static bool const value = (M != N) && are_unique<M, Ns...>::value && are_unique<N, Ns...>::value;
 };
 
 // Forward after

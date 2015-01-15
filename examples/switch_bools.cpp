@@ -10,7 +10,7 @@ constexpr int calculate_switch(int a, bool b) { return 2 * a + b; }
 template <typename... Bools>
 constexpr int switch_bools(Bools... bools) {
 	static_assert(sizeof...(bools) < sizeof(int) * CHAR_BIT, "Too many parameters to switch_bools");
-	static_assert(vta::is_homogenous_after<std::decay, bool, Bools...>::value, "");
+	static_assert(vta::are_same_after<std::decay, bool, Bools...>::value, "");
 	return vta::add_const(vta::foldl(&calculate_switch))(0, bools...);
 }
 
