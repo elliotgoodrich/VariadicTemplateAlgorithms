@@ -5,10 +5,10 @@
 #include <random>
 #include <type_traits>
 
-constexpr int calculate_switch(int a, bool b) { return 2 * a + b; }
+constexpr int calculate_switch(int a, bool b) noexcept { return 2 * a + b; }
 
 template <typename... Bools>
-constexpr int switch_bools(Bools... bools) {
+constexpr int switch_bools(Bools... bools) noexcept {
 	static_assert(sizeof...(bools) < sizeof(int) * CHAR_BIT, "Too many parameters to switch_bools");
 	static_assert(vta::are_same_after<std::decay, bool, Bools...>::value, "");
 	return vta::add_const(vta::foldl(&calculate_switch))(0, bools...);
