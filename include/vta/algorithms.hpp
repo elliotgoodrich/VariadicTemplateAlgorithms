@@ -54,20 +54,10 @@ template <>
 struct are_same<> : public std::true_type {};
 
 /** are_same_after */
-template <template<class> class Transform, typename... Args>
-struct are_same_after;
-
-template <template<class> class Transform, typename First, typename Second, typename... Args>
-struct are_same_after<Transform, First, Second, Args...> {
-	static bool const value = std::is_same<typename Transform<First>::type, typename Transform<Second>::type>::value
-	                       && are_same_after<Transform, Second, Args...>::value;
+template <template<class> class TypeTransformation, typename... Args>
+struct are_same_after {
+	static bool const value = vta::are_same<typename TypeTransformation<Args>::type...>::value;
 };
-
-template <template<class> class Transform, typename Arg>
-struct are_same_after<Transform, Arg> : public std::true_type {};
-
-template <template<class> class Transform>
-struct are_same_after<Transform> : public std::true_type {};
 
 /** are_unique */
 template <int... Ns>
