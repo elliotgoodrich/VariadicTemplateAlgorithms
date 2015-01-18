@@ -693,24 +693,30 @@ constexpr foldl_f<typename std::remove_reference<Function>::type> foldl(Function
 	return {std::forward<Function>(f)};
 }
 
-#if 0
 template <typename Function>
 class foldr_f {
-	foldl_f<Function> mF;
+	Function mF;
 
 public:
 	foldr_f(Function f)
 	: mF(std::move(f)) {
 	}
 
-	template <typename... Args>
-	constexpr auto operator()(Args&&... args) const {
-		return forward_after<reverse>(forward_after<flip>(mF))(std::forward<Args>(args)...);
+	template <typename First, typename Second, typename... Args>
+	constexpr auto operator()(First&& first, Second&& second, Args&&... args) const {
+		return mF(std::forward<First>(first),
+		          (*this)(std::forward<Second>(second), std::forward<Args>(args)...));
 	}
 
-	template <typename... Args>
-	auto operator()(Args&&... args) {
-		return forward_after<reverse>(forward_after<flip>(mF))(std::forward<Args>(args)...);
+	template <typename First, typename Second, typename... Args>
+	auto operator()(First&& first, Second&& second, Args&&... args) {
+		return mF(std::forward<First>(first),
+		          (*this)(std::forward<Second>(second), std::forward<Args>(args)...));
+	}
+
+	template <typename Arg>
+	constexpr Arg operator()(Arg&& arg) const noexcept {
+		return std::forward<Arg>(arg);
 	}
 };
 
@@ -718,7 +724,6 @@ template <typename Function>
 constexpr foldr_f<typename std::remove_reference<Function>::type> foldr(Function&& f) {
 	return {std::forward<Function>(f)};
 }
-#endif
 
 template <typename Function>
 class all_of_f {

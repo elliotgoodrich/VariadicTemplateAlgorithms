@@ -472,9 +472,10 @@ BOOST_AUTO_TEST_CASE(foldl) {
 }
 
 BOOST_AUTO_TEST_CASE(foldr) {
-	//auto s = string_concat{};
-	//auto const result = vta::foldr(s)(1, 2, 3);
-	//BOOST_CHECK_EQUAL(result, "123");
+	auto minus = [](auto l, auto r){ return l - r; };
+	BOOST_CHECK_EQUAL(vta::foldr(minus)(1), 1);
+	BOOST_CHECK_EQUAL(vta::foldr(minus)(1, 2), -1);
+	BOOST_CHECK_EQUAL(vta::foldr(minus)(1, 2, 3), 2);
 }
 
 BOOST_AUTO_TEST_CASE(compose) {
