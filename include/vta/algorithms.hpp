@@ -395,9 +395,9 @@ template <int N, int M>
 struct slice {
 	template <typename Function, typename... Args>
 	constexpr static auto transform(Function&& f, Args&&... args) {
-		static_assert(-sizeof...(args) <= N && N <= sizeof...(args),
+		static_assert(-sizeof...(args) <= N && N < sizeof...(args),
 		  "N is out of bounds");
-		static_assert(-sizeof...(args) <= M && M <= sizeof...(args),
+		static_assert(-sizeof...(args) <= M && M < sizeof...(args),
 		  "M is out of bounds");
 		static int const A = (N + sizeof...(args)) % sizeof...(args);
 		static int const B = (M + sizeof...(args)) % sizeof...(args);
@@ -429,8 +429,8 @@ struct swap {
 		  "N is out of bounds");
 		static_assert(-size <= M && M < size,
 		  "M is out of bounds");
-		static int const A = (N + sizeof...(args)) % sizeof...(args);
-		static int const B = (M + sizeof...(args)) % sizeof...(args);
+		static int const A = (N + size) % size;
+		static int const B = (M + size) % size;
 		static int const min = A < B ? A : B;
 		static int const max = A < B ? B : A;
 		return swap_helper<min, max>::transform(std::forward<Function>(f), std::forward<Args>(args)...);
