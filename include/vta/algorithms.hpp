@@ -181,12 +181,12 @@ struct id {
 	}
 };
 
-/** Forwards the arguments to the function only if Condition is true. */
+/** Calls the function with the given arguments if Condition is true. */
 template <bool Condition>
-struct forward_if;
+struct call_if;
 
 template <>
-struct forward_if<true> {
+struct call_if<true> {
 	template <typename Function, typename... Args>
 	constexpr static auto transform(Function&& f, Args&&... args) {
 		return id::transform(std::forward<Function>(f), std::forward<Args>(args)...);
@@ -194,9 +194,9 @@ struct forward_if<true> {
 };
 
 template <>
-struct forward_if<false> {
+struct call_if<false> {
 	template <typename Function, typename... Args>
-	constexpr static void transform(Function&&, Args&&...) {
+	constexpr static void transform(Function&&, Args&&...) noexcept {
 	}
 };
 
@@ -665,13 +665,13 @@ public:
 	template <typename First, typename... Args>
 	void operator()(First&& first, Args&&... args) const {
 		take<N>::transform(mF, std::forward<First>(first), args...);
-		forward_if<(sizeof...(args) >= N)>::transform(*this, std::forward<Args>(args)...);
+		call_if<(sizeof...(args) >= N)>::transform(*this, std::forward<Args>(args)...);
 	}
 
 	template <typename First, typename... Args>
 	void operator()(First&& first, Args&&... args) {
 		take<N>::transform(mF, std::forward<First>(first), args...);
-		forward_if<(sizeof...(args) >= N)>::transform(*this, std::forward<Args>(args)...);
+		call_if<(sizeof...(args) >= N)>::transform(*this, std::forward<Args>(args)...);
 	}
 };
 

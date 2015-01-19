@@ -261,11 +261,11 @@ All transformations in VTA have a `constexpr` `transform` function so are availa
     std::forward_after<vta::id>(vta::map(printer))(1, 2u, '3', "4");
 
 ---
-#### forward_if
+#### call_if
     template <bool Condition>
-    struct forward_if;
+    struct call_if
 
-`forward_if` forwards all arguments if and only if `Condition` is `true`, otherwise no arguments are forwarded.
+`call_if` calls the function only if `Condition` is `true`, otherwise noop.
 
 ##### examples
 
