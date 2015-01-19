@@ -882,10 +882,8 @@ struct at_helper<0u> {
 
 template <int N, typename... Args>
 constexpr auto at(Args&&... args) noexcept {
-	// GCC won't let me create static const variables in a
-	// constexpr function so we are left with this mess below.
-	static_assert(-static_cast<int>(count(args...)) <= N && N < static_cast<int>(count(args...)), "N is out of bounds");
-	return detail::at_helper<static_cast<unsigned>((N + count(args...)) % count(args...))>::get(std::forward<Args>(args)...);
+	static_assert(-count(args...) <= N && N < count(args...), "N is out of bounds");
+	return detail::at_helper<(N + count(args...)) % count(args...)>::get(std::forward<Args>(args)...);
 }
 
 }
