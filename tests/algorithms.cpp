@@ -356,6 +356,24 @@ BOOST_AUTO_TEST_CASE(take) {
 		vta::forward_after<vta::take<4>>(vta::map(printer{ss}))(1, '2', 3u, 4.5, "six");
 		BOOST_CHECK_EQUAL(ss.str(), "1234.5");
 	}
+
+	{
+		std::stringstream ss;
+		vta::forward_after<vta::take<-5>>(vta::map(printer{ss}))(1, '2', 3u, 4.5, "six");
+		BOOST_CHECK_EQUAL(ss.str(), "");
+	}
+
+	{
+		std::stringstream ss;
+		vta::forward_after<vta::take<-3>>(vta::map(printer{ss}))(1, '2', 3u, 4.5, "six");
+		BOOST_CHECK_EQUAL(ss.str(), "12");
+	}
+
+	{
+		std::stringstream ss;
+		vta::forward_after<vta::take<-1>>(vta::map(printer{ss}))(1, '2', 3u, 4.5, "six");
+		BOOST_CHECK_EQUAL(ss.str(), "1234.5");
+	}
 }
 
 BOOST_AUTO_TEST_CASE(cycle) {

@@ -362,7 +362,7 @@ struct drop {
 	constexpr static auto transform(Function&& f, Args&&... args) {
 		static_assert(-count(args...) <= N && N <= count(args...),
 		  "Cannot drop more variables than are passed");
-		return detail::drop_helper<N < 0 ? (N + count(args...)) : N>::transform(std::forward<Function>(f), std::forward<Args>(args)...);
+		return detail::drop_helper<N < 0 ? N + count(args...) : N>::transform(std::forward<Function>(f), std::forward<Args>(args)...);
 	}
 };
 
@@ -392,13 +392,14 @@ struct take_helper<N, false> {
 }
 
 /** Passes only the first N arguments. */
-template <unsigned N>
+template <int N>
 struct take {
 	template <typename Function, typename... Args>
 	constexpr static auto transform(Function&& f, Args&&... args) {
-		static_assert(N <= sizeof...(args), "Cannot take more parameters that are available");
-		return detail::take_helper<N, N == sizeof...(args)>::transform(std::forward<Function>(f),
-		                                                               std::forward<Args>(args)...);
+		static_assert(-count(args...) <= N && N <= count(args...), "Cannot take more parameters that are available");
+		return detail::take_helper<N < 0 ? N + count(args...) : N,
+		                           N == sizeof...(args)>::transform(std::forward<Function>(f),
+		                                                            std::forward<Args>(args)...);
 	}
 };
 
