@@ -406,7 +406,8 @@ struct take {
 template <>
 struct take<0u> {
 	template <typename Function, typename... Args>
-	constexpr static void transform(Function&&, Args&&...) {
+	constexpr static auto transform(Function&& f, Args&&...) {
+		return std::forward<Function>(f)();
 	}
 };
 
