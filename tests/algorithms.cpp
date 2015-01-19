@@ -286,6 +286,10 @@ BOOST_AUTO_TEST_CASE(shift_tail) {
 
 BOOST_AUTO_TEST_CASE(drop) {
 	{
+		BOOST_CHECK_EQUAL(vta::forward_after<vta::drop<0>>([](){ return 1; })(), 1);
+	}
+
+	{
 		std::stringstream ss;
 		vta::forward_after<vta::drop<0>>(vta::map(printer{ss}))(1, '2', 3u, 4.5, "six");
 		BOOST_CHECK_EQUAL(ss.str(), "1234.5six");
@@ -307,6 +311,24 @@ BOOST_AUTO_TEST_CASE(drop) {
 		std::stringstream ss;
 		vta::forward_after<vta::drop<5>>(vta::map(printer{ss}))(1, '2', 3u, 4.5, "six");
 		BOOST_CHECK_EQUAL(ss.str(), "");
+	}
+
+	{
+		std::stringstream ss;
+		vta::forward_after<vta::drop<-5>>(vta::map(printer{ss}))(1, '2', 3u, 4.5, "six");
+		BOOST_CHECK_EQUAL(ss.str(), "1234.5six");
+	}
+
+	{
+		std::stringstream ss;
+		vta::forward_after<vta::drop<-3>>(vta::map(printer{ss}))(1, '2', 3u, 4.5, "six");
+		BOOST_CHECK_EQUAL(ss.str(), "34.5six");
+	}
+
+	{
+		std::stringstream ss;
+		vta::forward_after<vta::drop<-1>>(vta::map(printer{ss}))(1, '2', 3u, 4.5, "six");
+		BOOST_CHECK_EQUAL(ss.str(), "six");
 	}
 }
 

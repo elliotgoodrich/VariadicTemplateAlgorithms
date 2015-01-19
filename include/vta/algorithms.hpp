@@ -35,6 +35,12 @@
 
 namespace vta {
 
+// Returns the size of the parameter pack as an integer
+template <typename... Args>
+constexpr int count(Args&&...) noexcept {
+	return sizeof...(Args);
+}
+
 // predicates
 
 /** are_same */
@@ -329,21 +335,34 @@ struct shift_tail<N, false> {
 	}
 };
 
-/** Drops the first N arguments. */
+namespace detail {
+
 template <unsigned N>
-struct drop {
+struct drop_helper {
 	template <typename Function, typename First, typename... Args>
 	constexpr static auto transform(Function&& f, First&&, Args&&... args) {
-		static_assert(N <= sizeof...(args) + 1, "Cannot drop more variables than are passed");
-		return drop<N - 1>::transform(std::forward<Function>(f), std::forward<Args>(args)...);
+		return drop_helper<N - 1>::transform(std::forward<Function>(f), std::forward<Args>(args)...);
 	}
 };
 
 template <>
-struct drop<0u> {
+struct drop_helper<0u> {
 	template <typename Function, typename... Args>
 	constexpr static auto transform(Function&& f, Args&&... args) {
 		return id::transform(std::forward<Function>(f), std::forward<Args>(args)...);
+	}
+};
+
+}
+
+/** Drops the first N arguments. */
+template <int N>
+struct drop {
+	template <typename Function, typename... Args>
+	constexpr static auto transform(Function&& f, Args&&... args) {
+		static_assert(-count(args...) <= N && N <= count(args...),
+		  "Cannot drop more variables than are passed");
+		return detail::drop_helper<N < 0 ? (N + count(args...)) : N>::transform(std::forward<Function>(f), std::forward<Args>(args)...);
 	}
 };
 
@@ -395,14 +414,14 @@ template <int N, int M>
 struct slice {
 	template <typename Function, typename... Args>
 	constexpr static auto transform(Function&& f, Args&&... args) {
-		static_assert(-sizeof...(args) <= N && N < sizeof...(args),
+		static_assert(-count(args...) <= N && N < count(args...),
 		  "N is out of bounds");
-		static_assert(-sizeof...(args) <= M && M < sizeof...(args),
+		static_assert(-count(args...) <= M && M < count(args...),
 		  "M is out of bounds");
-		static int const A = (N + sizeof...(args)) % sizeof...(args);
-		static int const B = (M + sizeof...(args)) % sizeof...(args);
+		static int const A = (N + count(args...)) % count(args...);
+		static int const B = (M + count(args...)) % count(args...);
 		static_assert(A <= B, "N must be <= M");
-		static_assert(B <= sizeof...(args), "M is out of bounds");
+		static_assert(B <= count(args...), "M is out of bounds");
 		return m_slice<A, B>::transform(std::forward<Function>(f), std::forward<Args>(args)...);
 	}
 
@@ -424,7 +443,7 @@ template <int N, int M>
 struct swap {
 	template <typename Function, typename... Args>
 	constexpr static auto transform(Function&& f, Args&&... args) {
-		static int const size = sizeof...(args);
+		static int const size = count(args...);
 		static_assert(-size <= N && N < size,
 		  "N is out of bounds");
 		static_assert(-size <= M && M < size,
@@ -863,8 +882,8 @@ template <int N, typename... Args>
 constexpr auto at(Args&&... args) noexcept {
 	// GCC won't let me create static const variables in a
 	// constexpr function so we are left with this mess below.
-	static_assert(-static_cast<int>(sizeof...(args)) <= N && N < static_cast<int>(sizeof...(args)), "N is out of bounds");
-	return detail::at_helper<static_cast<unsigned>((N + sizeof...(args)) % sizeof...(args))>::get(std::forward<Args>(args)...);
+	static_assert(-static_cast<int>(count(args...)) <= N && N < static_cast<int>(count(args...)), "N is out of bounds");
+	return detail::at_helper<static_cast<unsigned>((N + count(args...)) % count(args...))>::get(std::forward<Args>(args)...);
 }
 
 }
