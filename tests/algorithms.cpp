@@ -118,6 +118,29 @@ BOOST_AUTO_TEST_CASE(at) {
 	BOOST_CHECK_EQUAL(vta::at<-1>(1, '2', 3u, 4.5, "six"), std::string{"six"});
 }
 
+BOOST_AUTO_TEST_CASE(head_t) {
+	static_assert(std::is_same<int, vta::head_t<int>>::value, "");
+	static_assert(std::is_same<int, vta::head_t<int, char>>::value, "");
+	static_assert(std::is_same<float, vta::head_t<float, char>>::value, "");
+	static_assert(!std::is_same<float, vta::head_t<int, char>>::value, "");
+}
+
+BOOST_AUTO_TEST_CASE(last_t) {
+	static_assert(std::is_same<int, vta::last_t<int>>::value, "");
+	static_assert(std::is_same<char, vta::last_t<int, char>>::value, "");
+	static_assert(std::is_same<char, vta::last_t<float, char>>::value, "");
+	static_assert(!std::is_same<int, vta::last_t<int, char>>::value, "");
+}
+
+BOOST_AUTO_TEST_CASE(at_t) {
+	static_assert(std::is_same<int, vta::at_t<0>::type<int>>::value, "");
+	static_assert(std::is_same<int, vta::at_t<0>::type<int, char>>::value, "");
+	static_assert(std::is_same<char, vta::at_t<1>::type<int, char>>::value, "");
+	static_assert(std::is_same<char, vta::at_t<-1>::type<int, char>>::value, "");
+	static_assert(std::is_same<int, vta::at_t<2>::type<float, char, int>>::value, "");
+	static_assert(!std::is_same<int, vta::at_t<-2>::type<float, char, int>>::value, "");
+}
+
 /**************************************************************************************************
  * Transformations                                                                                *
  **************************************************************************************************/

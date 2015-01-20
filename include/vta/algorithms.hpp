@@ -896,6 +896,22 @@ constexpr auto at(Args&&... args) noexcept {
 	return detail::at_helper<(N + count(args...)) % count(args...)>::get(std::forward<Args>(args)...);
 }
 
+/**************************************************************************************************
+ * Type Aliases                                                                                   *
+ **************************************************************************************************/
+
+template <typename... Args>
+using head_t = decltype(head(std::declval<Args>()...));
+
+template <typename... Args>
+using last_t = decltype(last(std::declval<Args>()...));
+
+template <int N>
+struct at_t {
+	template <typename... Args>
+	using type = decltype(at<N>(std::declval<Args>()...));
+};
+
 }
 
 #endif
