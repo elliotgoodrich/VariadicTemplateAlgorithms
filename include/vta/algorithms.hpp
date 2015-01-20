@@ -862,8 +862,8 @@ constexpr auto last(Arg&& arg) noexcept {
 	return std::forward<Arg>(arg);
 }
 
-template <typename Arg1, typename Arg2, typename... Args>
-constexpr auto last(Arg1&&, Arg2&&, Args&&... rest) noexcept {
+template <typename Arg1, typename... Args>
+constexpr auto last(Arg1&&, Args&&... rest) noexcept {
 	return last(std::forward<Args>(rest)...);
 }
 

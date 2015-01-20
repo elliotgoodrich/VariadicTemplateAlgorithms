@@ -102,6 +102,7 @@ BOOST_AUTO_TEST_CASE(head) {
 BOOST_AUTO_TEST_CASE(last) {
 	BOOST_CHECK_EQUAL(vta::last(0), 0);
 	BOOST_CHECK_EQUAL(vta::last(std::string{"1"}), "1");
+	BOOST_CHECK_EQUAL(vta::last(0, 1), 1);
 	BOOST_CHECK_EQUAL(vta::last(0, 1, 2), 2);
 	BOOST_CHECK_EQUAL(vta::last(1, "2", 3), 3);
 }
