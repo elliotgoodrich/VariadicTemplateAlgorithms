@@ -28,7 +28,7 @@ There are many functions which return functors that apply a function across any 
 		return vta::foldl(max)(args...);
 	}
 
-Reversing arguments and forwarding them on is also trivial,
+Reversing arguments and forwarding them on is also easy,
 
 	// Prints an argument
 	auto printer = [](auto const& x){ std::cout << x; };
@@ -43,8 +43,8 @@ Reversing arguments and forwarding them on is also trivial,
 	// Prints all arguments in reverse order
 	template <typename... Args>
 	void reverse_print(Args&&... args) {
-		// vta::forward_after forwards the arguments to a funcion after a transformation
-		vta::forward_after<vta::reverse>(&print<Args&&...>)(std::forward<Args>(args)...);
+		// vta::forward_after forwards the arguments to a function after a transformation
+		vta::forward_after<vta::reverse>(vta::map(printer))(std::forward<Args>(args)...);
 	}
 
 The `vta::forward_after` function can perform many other transformations such as swapping arguments or shifting all arguments to the left. The full list of transformation can be found in the [api reference](API_REFERENCE.md#functor).
