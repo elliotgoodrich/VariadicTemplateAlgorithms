@@ -41,7 +41,17 @@ constexpr int count(Args&&...) noexcept {
 	return sizeof...(Args);
 }
 
-// predicates
+/**************************************************************************************************
+ * Macro                                                                                          *
+ **************************************************************************************************/
+
+// Provided by Florian Weber (http://florianjw.de/en/passing_overloaded_functions.html)
+#define VTA_FN_TO_FUNCTOR(...) [](auto&&... args) \
+  -> decltype(auto){ return __VA_ARGS__(std::forward<decltype(args)>(args)...); }
+
+/**************************************************************************************************
+ * Predicates                                                                                     *
+ **************************************************************************************************/
 
 /** are_same */
 template <typename... Args>

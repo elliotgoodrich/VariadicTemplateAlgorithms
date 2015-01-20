@@ -2,6 +2,7 @@
 
 #include <boost/test/unit_test.hpp>
 
+#include <algorithm>
 #include <iostream>
 #include <type_traits>
 #include <string>
@@ -592,6 +593,10 @@ BOOST_AUTO_TEST_CASE(none_of) {
 	BOOST_CHECK_EQUAL(vta::none_of(is_positive_int{})(0u, 2), false);
 	BOOST_CHECK_EQUAL(vta::none_of(is_positive_int{})(-2), true);
 	BOOST_CHECK_EQUAL(vta::none_of(is_positive_int{})(), true);
+}
+
+BOOST_AUTO_TEST_CASE(macro) {
+	BOOST_CHECK_EQUAL(vta::foldl(VTA_FN_TO_FUNCTOR(std::max))(0, 1, 4, 2), 4);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
