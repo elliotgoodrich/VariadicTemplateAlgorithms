@@ -142,19 +142,6 @@ When dealing with variadic functors created by this library, the `const` overloa
 <a name="functor"></a>Variadic Functor functions
 --------------------------
 
-The variadic functors created are copyable if the
-
-Like the standard library, all functions in VTA may copy functors that are passed to it an unspecified number of times. If you want to have reference semantics for functors, use `std::ref` and `std::cref` in `<functional>`. No copies of other parameters passed are ever copied, only references are passed around.
-more than std::numeric_limits<int>::max() parameters may be passed to any variadic functor
-
-When discussed, the index of parameters always begins at 0.
-
-For example:
-
-    // functor can be copied any number of times, whereas arg1, arg2, ... never
-    // have copies made and are only ever forwarded
-    vta::map(functor)(arg1, arg2, arg3, arg4);
-
 The following functions in the Variadic Template Algorithm library create a variadic functor. These functors have an unspecified type, but have the following member function signatures.
 
     struct /*unspecified*/ {
@@ -166,6 +153,20 @@ The following functions in the Variadic Template Algorithm library create a vari
     };
 
 The return type of `operator()` differs and will be specified for each function.
+
+Like the standard library, all functions in VTA may copy functors that are passed to it an unspecified number of times. If you want to have reference semantics for functors, use `std::ref` and `std::cref` in `<functional>`. No copies of other parameters passed are ever copied, only references are passed around.
+
+For example:
+
+    // functor can be copied any number of times, whereas arg1, arg2, ... never
+    // have copies made and are only ever forwarded
+    vta::map(functor)(arg1, arg2, arg3, arg4);
+
+When discussed, the index of parameters always begins at 0.
+
+More than std::numeric_limits<int>::max() parameters may not be passed to any variadic functor (though this situation is unlikely to ever happen naturally, and I'm sure would struggle to compile regardless).
+
+The variadic functors created are copyable/movable if the function they are created with is copyable/movable.
 
 ---
 #### `map`
