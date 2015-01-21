@@ -476,7 +476,7 @@ If `N` is positive,`take` forwards only the first `N` arguments. `N` must be les
 
 `cycle` permutes the parameters at the positions `Ns...` using [cycle notation](http://en.wikipedia.org/wiki/Cycle_notation). Remember that indexing starts from 0, rather than starting from 1, which is more commonly used in mathematics literature. If any positions are negative, it is counted backwards from the end of the parameters, e.g. -1 is the index of the last parameter.
 
-All indexes must be unique. `cycle<0, 1, 1>` will not compile and `cycle<-1, 3>` will not compile if there are 4 arguments passed to `forward_after` since -1 and 3 describe the same index.
+All indexes must be unique. `cycle<0, 1, 1>` will not compile. `cycle<-1, 3>` will not compile if there are 4 arguments passed to `forward_after` since -1 and 3 describe the same index.
 
 ##### examples
 
