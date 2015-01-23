@@ -75,8 +75,29 @@ struct are_same_after {
 	static bool const value = vta::are_same<typename TypeTransformation<Args>::type...>::value;
 };
 
-/** are_unique */
+/** are_unique_ints */
 template <int... Ns>
+struct are_unique_ints;
+
+template <>
+struct are_unique_ints<> {
+	static bool const value = true;
+};
+
+template <int N>
+struct are_unique_ints<N> {
+	static bool const value = true;
+};
+
+template <int M, int N, int... Ns>
+struct are_unique_ints<M, N, Ns...> {
+	static bool const value = (M != N)
+	                        && are_unique_ints<M, Ns...>::value
+	                        && are_unique_ints<N, Ns...>::value;
+};
+
+/** are_unique */
+template <typename... Args>
 struct are_unique;
 
 template <>
@@ -84,14 +105,22 @@ struct are_unique<> {
 	static bool const value = true;
 };
 
-template <int N>
-struct are_unique<N> {
+template <typename Arg>
+struct are_unique<Arg> {
 	static bool const value = true;
 };
 
-template <int M, int N, int... Ns>
-struct are_unique<M, N, Ns...> {
-	static bool const value = (M != N) && are_unique<M, Ns...>::value && are_unique<N, Ns...>::value;
+template <typename Arg1, typename Arg2, typename... Args>
+struct are_unique<Arg1, Arg2, Args...> {
+	static bool const value = (!std::is_same<Arg1, Arg2>::value)
+	                        && are_unique<Arg1, Args...>::value
+	                        && are_unique<Arg2, Args...>::value;
+};
+
+/** are_unique_after */
+template <template<class> class TypeTransformation, typename... Args>
+struct are_unique_after {
+	static bool const value = vta::are_unique<typename TypeTransformation<Args>::type...>::value;
 };
 
 // Forward after

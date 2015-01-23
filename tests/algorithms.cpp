@@ -78,18 +78,40 @@ BOOST_AUTO_TEST_CASE(are_same) {
 }
 
 BOOST_AUTO_TEST_CASE(are_same_after) {
+	static_assert(vta::are_same_after<std::remove_reference>::value, "");
+	static_assert(vta::are_same_after<std::remove_reference, int>::value, "");
 	static_assert(vta::are_same_after<std::remove_reference, int&&, int&>::value, "");
+	static_assert(!vta::are_same_after<std::remove_reference, int, float>::value, "");
+}
+
+BOOST_AUTO_TEST_CASE(are_unique_ints) {
+	static_assert(vta::are_unique_ints<>::value, "");
+	static_assert(vta::are_unique_ints<1>::value, "");
+	static_assert(vta::are_unique_ints<1, 2>::value, "");
+	static_assert(!vta::are_unique_ints<1, 1>::value, "");
+	static_assert(vta::are_unique_ints<1, -1>::value, "");
+	static_assert(vta::are_unique_ints<1, 2, 3, 4, 5>::value, "");
+	static_assert(!vta::are_unique_ints<1, 2, 3, 1, 5>::value, "");
+	static_assert(!vta::are_unique_ints<2, 3, 4, 5, 6, 5>::value, "");
 }
 
 BOOST_AUTO_TEST_CASE(are_unique) {
 	static_assert(vta::are_unique<>::value, "");
-	static_assert(vta::are_unique<1>::value, "");
-	static_assert(vta::are_unique<1, 2>::value, "");
-	static_assert(!vta::are_unique<1, 1>::value, "");
-	static_assert(vta::are_unique<1, -1>::value, "");
-	static_assert(vta::are_unique<1, 2, 3, 4, 5>::value, "");
-	static_assert(!vta::are_unique<1, 2, 3, 1, 5>::value, "");
-	static_assert(!vta::are_unique<2, 3, 4, 5, 6, 5>::value, "");
+	static_assert(vta::are_unique<int>::value, "");
+	static_assert(vta::are_unique<int, float>::value, "");
+	static_assert(!vta::are_unique<int, int>::value, "");
+	static_assert(vta::are_unique<int, int&>::value, "");
+	static_assert(vta::are_unique<int&&, int&>::value, "");
+	static_assert(vta::are_unique<int, float>::value, "");
+	static_assert(!vta::are_unique<int, float, int>::value, "");
+	static_assert(vta::are_unique<int, float, char>::value, "");
+}
+
+BOOST_AUTO_TEST_CASE(are_unique_after) {
+	static_assert(vta::are_unique_after<std::remove_reference>::value, "");
+	static_assert(vta::are_unique_after<std::remove_reference, int>::value, "");
+	static_assert(!vta::are_unique_after<std::remove_reference, int&&, int&>::value, "");
+	static_assert(vta::are_unique_after<std::remove_reference, int, float>::value, "");
 }
 
 BOOST_AUTO_TEST_CASE(head) {

@@ -43,8 +43,36 @@ This struct is a shorthand way to apply a type transformation to all of `Args...
 
 ---
 #### `are_unique`
+    template <typename... Args>
+    struct are_unique{
+        static bool const value;
+    };
+
+`value` is true if and only if all `Args...` are unique types
+
+##### example
+
+    static_assert(vta::are_unique<int, float, double>::value, "");
+    static_assert(!vta::are_unique<int, int, double>::value, "");
+
+---
+#### `are_unique_after`
+    template <typename TypeTransformation, typename... Args>
+    struct are_unique_after{
+        static bool const value
+          = vta::are_unique<typename TypeTransformation<Args>::type...>::value;
+    };
+
+This struct is a shorthand way to apply a type transformation to all of `Args...` and the variable `value` is the result of whether all of these are unique.
+
+##### example
+
+    static_assert(!vta::are_unique_after<std::remove_reference, int, int&, int&&>::value, "");
+
+---
+#### `are_unique_ints`
     template <int... Ns>
-    struct are_unique {
+    struct are_unique_ints {
         static bool const value;
     };
 
@@ -52,8 +80,8 @@ This struct is a shorthand way to apply a type transformation to all of `Args...
 
 ##### examples
 
-    static_assert(vta::are_unique<1, 2, 3>::value, "");
-    static_assert(!vta::are_unique<1, 2, 3, 2>::value, "");
+    static_assert(vta::are_unique_ints<1, 2, 3>::value, "");
+    static_assert(!vta::are_unique_ints<1, 2, 3, 2>::value, "");
 
 
 <a name="misc"></a>Miscellaneous Functions
