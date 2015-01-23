@@ -6,4 +6,5 @@ include_directories(../include/)
 
 add_executable(concat concat.cpp)
 add_executable(reverse_polish reverse_polish.cpp)
+add_executable(safe_mean safe_mean.cpp)
 add_executable(switch_bools switch_bools.cpp)
