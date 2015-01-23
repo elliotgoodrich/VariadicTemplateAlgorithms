@@ -22,37 +22,37 @@ static constexpr fact_type fact{};
 
 template <typename T>
 struct polish_calculator {
-	constexpr T operator()(std::pair<T, T> stack, add_type) {
+	constexpr T operator()(std::pair<T, T> stack, add_type) noexcept {
 		return stack.first + stack.second;
 	}
 
-	constexpr T operator()(std::pair<T, T> stack, minus_type) {
+	constexpr T operator()(std::pair<T, T> stack, minus_type) noexcept {
 		return stack.first - stack.second;
 	}
 
-	constexpr T operator()(std::pair<T, T> stack, mult_type) {
+	constexpr T operator()(std::pair<T, T> stack, mult_type) noexcept {
 		return stack.first * stack.second;
 	}
 
-	constexpr T operator()(std::pair<T, T> stack, div_type) {
+	constexpr T operator()(std::pair<T, T> stack, div_type) noexcept {
 		return stack.first / stack.second;
 	}
 
-	constexpr T operator()(T stack, fact_type) {
+	constexpr T operator()(T stack, fact_type) noexcept {
 		return (stack == 0) ? 1 : stack * (*this)(stack - 1, fact);
 	}
 
-	constexpr std::pair<T, T> operator()(T first, T second) {
+	constexpr std::pair<T, T> operator()(T first, T second) noexcept {
 		return {first, second};
 	}
 
-	constexpr T operator()(start_type, T second) {
+	constexpr T operator()(start_type, T second) noexcept {
 		return second;
 	}
 };
 
 template <typename T, typename... Args>
-constexpr T rev_polish_calc(Args... args) {
+constexpr T rev_polish_calc(Args... args) noexcept {
 	return vta::add_const(vta::foldl(polish_calculator<T>{}))(start, args...);
 }
 
