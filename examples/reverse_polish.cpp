@@ -1,6 +1,8 @@
 #include "vta/algorithms.hpp"
 
+#include <stdexcept>
 #include <iostream>
+#include <type_traits>
 
 struct start_type {};
 static constexpr start_type start{};
@@ -20,7 +22,7 @@ static constexpr div_type divide{};
 struct fact_type {};
 static constexpr fact_type fact{};
 
-template <typename T>
+template <typename T, typename std::enable_if<std::is_arithmetic<T>::value>* = nullptr>
 struct polish_calculator {
 	constexpr T operator()(std::pair<T, T> stack, add_type) noexcept {
 		return stack.first + stack.second;
@@ -38,8 +40,12 @@ struct polish_calculator {
 		return stack.first / stack.second;
 	}
 
-	constexpr T operator()(T stack, fact_type) noexcept {
-		return (stack == 0) ? 1 : stack * (*this)(stack - 1, fact);
+	// Only allow factorial if the type is integral (e.g. disable for double)
+	// This function can only throw if T is signed, so mark as noexcept otherwise
+	constexpr auto operator()(T stack, fact_type) noexcept(std::is_unsigned<T>::value)
+	  -> typename std::enable_if<std::is_integral<T>::value, T>::type {
+		return (stack < 0) ? throw std::runtime_error{"Negative value passed to factorial"}
+		                   : (stack == 0) ? 1 : stack * (*this)(stack - 1, fact);
 	}
 
 	constexpr std::pair<T, T> operator()(T first, T second) noexcept {
@@ -51,8 +57,11 @@ struct polish_calculator {
 	}
 };
 
+// This function can only throw if call factorial on a signed value, so mark as nothrow if we
+// are operating on an unsigned type or fact_type is not in Args...
 template <typename T, typename... Args>
-constexpr T rev_polish_calc(Args... args) noexcept {
+constexpr T rev_polish_calc(Args... args)
+  noexcept(std::is_unsigned<T>::value || vta::are_unique<fact_type, Args...>::value) {
 	return vta::add_const(vta::foldl(polish_calculator<T>{}))(start, args...);
 }
 
