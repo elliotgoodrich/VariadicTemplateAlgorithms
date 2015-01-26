@@ -519,6 +519,15 @@ private:
 	};
 };
 
+namespace detail {
+
+template <int N, int Modulus>
+struct modulus {
+	static int const value = (N + Modulus) % Modulus;
+};
+
+}
+
 template <int... Positions>
 struct cycle;
 
@@ -542,6 +551,10 @@ template <int First, int Second, int... Rest>
 struct cycle<First, Second, Rest...> {
 	template <typename Function, typename... Args>
 	constexpr static auto transform(Function&& f, Args&&... args) {
+		static_assert(vta::are_unique_ints<detail::modulus<First, count(args...)>::value,
+		                                   detail::modulus<Second, count(args...)>::value,
+		                                   detail::modulus<Rest, count(args...)>::value...>::value,
+		  "The positions to permute must be unique");
 		return compose<swap<First, Second>, cycle<First, Rest...>>::transform(std::forward<Function>(f), std::forward<Args>(args)...);
 	}
 };
