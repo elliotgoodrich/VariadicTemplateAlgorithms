@@ -346,10 +346,10 @@ All transformations in VTA have a `constexpr` `transform` function so are availa
 
     // prints "1234"
     auto printer = [](auto const& x){ std::cout << x; };
-    std::forward_after<vta::forward_if<true>>(vta::map(printer))(1, 2u, '3', "4");
+    std::forward_after<vta::call_if<true>>(vta::map(printer))(1, 2u, '3', "4");
 
     // prints nothing
-    std::forward_after<vta::forward_if<false>>(vta::map(printer))(1, 2u, '3', "4");
+    std::forward_after<vta::call_if<false>>(vta::map(printer))(1, 2u, '3', "4");
 
 ---
 #### `flip`
