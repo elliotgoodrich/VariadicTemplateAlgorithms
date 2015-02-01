@@ -40,16 +40,16 @@ auto printer = [](auto const& x){ std::cout << x; };
 
 // Prints all arguments in order
 template <typename... Args>
-void print(Args&&... args) {
+void print(Args... args) {
 	// vta::map applies a function to each argument in order
 	vta::map(printer)(args...);
 }
 
 // Prints all arguments in reverse order
 template <typename... Args>
-void reverse_print(Args&&... args) {
+void reverse_print(Args... args) {
 	// vta::forward_after forwards the arguments to a function after a transformation
-	vta::forward_after<vta::reverse>(vta::map(printer))(std::forward<Args>(args)...);
+	vta::forward_after<vta::reverse>(vta::map(printer))(args...);
 }
 ```
 
