@@ -383,7 +383,7 @@ The `tranform` function calls `f` with some or all of `args...` after applying s
 
 All transformations in VTA have a `constexpr` `transform` function so are available to use in `constexpr` functions.
 
-`#### id`
+#### `id`
 ```cpp
 struct id;
 ```
