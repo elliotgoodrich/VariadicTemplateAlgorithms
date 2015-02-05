@@ -1,6 +1,8 @@
 Variadic Template Algorithms
 ============================
 
+[![Build Status](https://travis-ci.org/elliotgoodrich/VariadicTemplateAlgorithms.svg?branch=master)](https://travis-ci.org/elliotgoodrich/VariadicTemplateAlgorithms)
+
 Working with parameter packs in C++ can be difficult. Getting a reference to the last argument of a parameter pack or reversing the order of arguments to a function is much harder than it should be. VTA is a header-only C++14 library to make this easier.
 
 Grabbing the nth parameter is very simple with `vta::head`, `vta::at`, and `vta::last`:
