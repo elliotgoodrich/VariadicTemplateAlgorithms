@@ -55,4 +55,4 @@ void reverse_print(Args... args) {
 }
 ```
 
-The `vta::forward_after` function can perform many other transformations such as swapping arguments or shifting all arguments to the left. The full list of transformation can be found in the [api reference](API_REFERENCE.md#functor).
+The `vta::forward_after` function can perform many other transformations such as swapping arguments or shifting all arguments to the left. The full list of transformation can be found in the [api reference](API_REFERENCE.md#transformations).
