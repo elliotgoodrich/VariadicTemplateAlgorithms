@@ -606,7 +606,7 @@ namespace detail {
 template <template <class> class Predicate, typename... Passed>
 struct filter_helper;
 
-template <template <class> class Predicate, bool Passed, typename... Passed>
+template <template <class> class Predicate, bool BPassed, typename... Passed>
 struct next_has_passed;
 
 template <template <class> class Predicate, typename... Passed>
